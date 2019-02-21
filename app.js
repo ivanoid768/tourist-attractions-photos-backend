@@ -8,7 +8,7 @@ const port = process.env.PORT;
 const api_key = 'LF7U6m6DmxNiw3JrNV3Q8PjITsukfXrihnHriEcyQd5nlbJH8VfbHPVI3PEAmHzZ';
 const api_secret = 'abLsVWn1oSNXeXmrh7i8x29zt4YhxszoevnwZUqAIvIgmwziZ07EjObiU9UC7NTd';
 
-// app.get('/', (req, res) => res.send('Hello World!'))
+app.get('/', (req, res) => res.send('Hello World!'))
 app.get('/favicon.ico', (res) => res.send('favicon.ico'))
 
 app.get('/disqus_api/access_token/', (req, res, next) => { // photo/:id
