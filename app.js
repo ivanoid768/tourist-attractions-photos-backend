@@ -8,7 +8,7 @@ const port = process.env.PORT || 4000;
 const api_key = 'LF7U6m6DmxNiw3JrNV3Q8PjITsukfXrihnHriEcyQd5nlbJH8VfbHPVI3PEAmHzZ';
 const api_secret = 'abLsVWn1oSNXeXmrh7i8x29zt4YhxszoevnwZUqAIvIgmwziZ07EjObiU9UC7NTd';
 
-app.get('/', (req, res) => res.send(req.baseUrl + ' ' + req.ip + ' ' + req.hostname + ' ' + req.originalUrl))
+app.get('/', (req, res) => res.send(req.url + ' ' + req.baseUrl + ' ' + req.ip + ' ' + req.hostname + ' ' + req.originalUrl))
 app.get('/favicon.ico', (res) => res.send('favicon.ico'))
 
 app.get('/disqus_api/access_token/', (req, res, next) => { // photo/:id
@@ -20,7 +20,7 @@ app.get('/disqus_api/access_token/', (req, res, next) => { // photo/:id
 	let data = {
 		grant_type: 'authorization_code',
 		client_id: api_key,
-		redirect_uri: 'http://localhost:4000/disqus_api/access_token/',
+		redirect_uri: 'https://' + req.hostname + '/disqus_api/access_token/',
 		client_secret: api_secret,
 		code: code
 	}
@@ -35,7 +35,7 @@ app.get('/disqus_api/access_token/', (req, res, next) => { // photo/:id
 			console.log(resp.data.access_token)
 			return resp.data.access_token;
 		})
-		.then(access_token => res.redirect(`http://localhost:3000/?access_token=${access_token}`))
+		.then(access_token => res.redirect(`https://ivanoid768.github.io/tourist-attractions-photos/?access_token=${access_token}`))
 		.catch(console.log)
 
 
