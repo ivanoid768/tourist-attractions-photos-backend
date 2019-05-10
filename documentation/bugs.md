@@ -1,0 +1,1 @@
+Error 400 when requesting for 2 or less photos per page

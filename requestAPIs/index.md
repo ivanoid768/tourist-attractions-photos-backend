@@ -1,0 +1,1 @@
+#Provide convinient and simple Interfaces to RestAPIs and hide all complexity in realization!
