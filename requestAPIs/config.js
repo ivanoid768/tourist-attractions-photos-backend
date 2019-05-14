@@ -66,3 +66,5 @@ function fromPixabay() {
 
 	return axi;
 }
+
+module.exports.photos_cache = new Object(null);

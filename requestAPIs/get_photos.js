@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { photos_cache } = require('./config')
 
 const baseQuery = `tourist+attraction`;
 
@@ -261,6 +262,7 @@ function unifyListPhotoInterface(source_photo, source) {
 		photo.id = source_photo.id;
 		photo.name = source_photo.tags.replace(/,/ig, '');
 		photo.thumbnail = source_photo.webformatURL;
+		photos_cache[`${source_photo.id}:${source}`] = source_photo;
 	}
 	else if (source == 'pexels') {
 		photo.id = source_photo.id;

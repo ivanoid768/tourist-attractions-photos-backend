@@ -1,5 +1,6 @@
 const { sources } = require('./config')
 const { unifyPhotoInterface } = require('./get_photos')
+const { photos_cache } = require('./config')
 
 module.exports = function getPhotoById(id, src_name) {
 
@@ -22,6 +23,13 @@ module.exports = function getPhotoById(id, src_name) {
 				return unifyPhotoInterface(resp.data, source_name);
 			})
 	} else if (source_name == 'pixabay') {
+
+		let photo = photos_cache[`${id}:${source_name}`];
+		if (photo) {
+			photo = unifyPhotoInterface(photo, source_name);
+			return Promise.resolve(photo);
+		}
+
 		return Promise.resolve({
 			author_link: '',
 			author_name: '',
