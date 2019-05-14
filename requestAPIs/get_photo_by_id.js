@@ -1,31 +1,34 @@
-import axi from './get_photos'
-import { unifyPhotoInterface } from './get_photos'
+const { sources } = require('./config')
+const { unifyPhotoInterface } = require('./get_photos')
 
-export default function getPhotoById(id, source_name) {
+module.exports = function getPhotoById(id, src_name) {
 
-	let s_name = source_name.toLowerCase();
+	let source_name = src_name.toLowerCase();
 
-	let s_m = {
-		unsplash: {
-			source: 'usplash',
-			url: 'https://api.unsplash.com/photos/'
-		},
-		pexels: {
-			source: 'pexels',
-			url: 'https://api.pexels.com/v1/photos/'
-		}
+	let url = '';
+
+	if (sources[source_name]) {
+		if (source_name == 'unsplash')
+			url = 'https://api.unsplash.com/photos/';
+		else if (source_name == 'pexels')
+			url = 'https://api.pexels.com/v1/photos/'
 	}
 
-	if (s_name == 'unsplash' || s_name == 'pexels') {
-		return axi[s_m[s_name].source].request({
-			url: s_m[s_name].url + id
+	if (source_name == 'unsplash' || source_name == 'pexels') {
+		return sources[source_name].request({
+			url: url + id
 		})
 			.then(resp => {
-				// console.log('unsplash: ', resp.data);
-				return unifyPhotoInterface(resp.data);
+				return unifyPhotoInterface(resp.data, source_name);
 			})
-	} else if (s_name == 'pixabay') {
-		return Promise.resolve(false);
+	} else if (source_name == 'pixabay') {
+		return Promise.resolve({
+			author_link: '',
+			author_name: '',
+			source_link: '',
+			source_name: '',
+			main_image_link: ''
+		});
 	}
 
 }

@@ -4,7 +4,8 @@ const qs = require('qs')
 const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
-const { get_photos } = require('./requestAPIs/get_photos')
+const { get_photos } = require('./requestAPIs/get_photos');
+const getPhotoById = require('./requestAPIs/get_photo_by_id');
 
 const app = express()
 const port = process.env.PORT || 4000;
@@ -23,22 +24,28 @@ const books = [
 
 // The GraphQL schema in string form
 const typeDefs = `
-	type Query { books: [Book], photos(page: Int = 1, per_page: Int = 10, search: String = ""): [Photo] }
+	type Query { 
+		books: [Book], 
+		photos(page: Int = 1, per_page: Int = 10, search: String = ""): [ListPhoto]
+		photo(id: String, source_name: String):Photo
+	}
 	type Book { title(id: String = "0"): String, author: String }
-	type Photo { id: String, name: String, thumbnail: String}
+	type ListPhoto { id: String, name: String, source: String, thumbnail: String}
+	type Photo {
+		author_link: String,
+		author_name: String,
+		source_link: String,
+		source_name: String,
+		main_image_link: String
+	}
   `;
 
 // The resolvers
 const resolvers = {
 	Query: {
 		books: () => books,
-		photos: (parent, args) => get_photos(args.page, args.per_page, args.search).then(resp => resp.photos)
-	},
-	Book: {
-		title: function (parent, args) {
-			console.log(args)
-			return parent.title;
-		}
+		photos: (parent, args) => get_photos(args.page, args.per_page, args.search).then(resp => resp.photos),
+		photo: (parent, args) => getPhotoById(args.id, args.source_name)
 	}
 };
 

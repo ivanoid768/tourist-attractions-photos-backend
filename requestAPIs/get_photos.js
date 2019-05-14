@@ -142,7 +142,7 @@ function setThumbnail(photo, img_name) {
 	return photo;
 }
 
-function unifyPhotoInterface(photo) {
+function unifyPhotoInterface(photo, source_name) {
 	// let author_link
 	// let author_name
 	// let source_link
@@ -152,36 +152,33 @@ function unifyPhotoInterface(photo) {
 	if (photo.total_results)
 		photo.total = photo.total_results;
 
-	if (photo.photographer_url)
+	if (source_name == 'pexels') {
 		photo.author_link = photo.photographer_url;
-	else if (photo.user_id)
-		photo.author_link = 'https://pixabay.com/en/users/' + photo.user_id;
-	else if (photo.user && photo.user.links && photo.user.links.html)
-		photo.author_link = photo.user.links.html;
-
-	if (photo.photographer)
 		photo.author_name = photo.photographer;
-	else if (photo.user && typeof (photo.user) == 'string')
-		photo.author_name = photo.user;
-	else if (photo.user && typeof (photo.user) == 'object' && photo.user.name)
-		photo.author_name = photo.user.name;
-
-	if (photo.url)
 		photo.source_link = photo.url;
-	else if (photo.pageURL)
-		photo.source_link = photo.pageURL; // str2.match(/\/([^/]+)(?:\/)$/i)[1]
-	else if (photo.links && photo.links.html)
-		photo.source_link = photo.links.html; //  str.match(/photos\/(.+)(?:\/|)$/i)[1]
-
-	let source_name = photo.source_link.match(/http(?:s|):\/\/(?:www.|)([a-zA-Z]+).com/i)[1]
-	photo.source_name = source_name.replace(source_name.charAt(0), source_name.charAt(0).toUpperCase());
-
-	if (photo.src && photo.src.large2x)
 		photo.main_image_link = photo.src.large2x;
-	else if (photo.largeImageURL)
+	}
+	else if (source_name == 'pixabay') {
+		photo.author_link = 'https://pixabay.com/en/users/' + photo.user_id;
+		photo.author_name = photo.user;
+		photo.source_link = photo.pageURL; // str2.match(/\/([^/]+)(?:\/)$/i)[1]
 		photo.main_image_link = photo.largeImageURL;
-	else if (photo.urls && photo.urls.regular)
+	}
+	else if (source_name == 'unsplash') {
+		photo.author_link = photo.user.links.html;
+		photo.author_name = photo.user.name;
+		photo.source_link = photo.links.html; //  str.match(/photos\/(.+)(?:\/|)$/i)[1]
 		photo.main_image_link = photo.urls.regular;
+	}
+
+	let src_name = '';
+	if (source_name == 'unsplash' || source_name == 'pexels') {
+		src_name = source_name;
+	} else {
+		src_name = photo.source_link.match(/http(?:s|):\/\/(?:www.|)([a-zA-Z]+).com/i)[1];
+	}
+
+	photo.source_name = src_name.replace(src_name.charAt(0), src_name.charAt(0).toUpperCase());
 
 	return photo;
 
@@ -212,7 +209,7 @@ function composePhotos(dataArr, per_page) {
 		dataArr.forEach(data => {
 			let source = data.source_name;
 			let source_photos;
-			console.log(source, data)
+			// console.log(source, data)
 
 			if (source == 'unsplash')
 				source_photos = data.results;
@@ -252,7 +249,7 @@ function getTotal(dataArr) {
 }
 
 function unifyListPhotoInterface(source_photo, source) {
-	console.log(source_photo, source)
+	// console.log(source_photo, source)
 	let photo = new Object(null);
 
 	if (source == 'unsplash') {
@@ -273,6 +270,8 @@ function unifyListPhotoInterface(source_photo, source) {
 
 	if (photo.name)
 		photo.name = photo.name.charAt(0).toUpperCase() + photo.name.slice(1);
+
+	photo.source = source;
 
 	return photo.thumbnail ? photo : null;
 }
