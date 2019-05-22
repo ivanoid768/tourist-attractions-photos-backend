@@ -24,12 +24,14 @@ const books = [
 
 // The GraphQL schema in string form
 const typeDefs = `
-	type Query { 
-		books: [Book], 
-		photos(page: Int = 1, per_page: Int = 10, search: String = ""): [ListPhoto]
+	type Query {
+		photos(page: Int = 1, per_page: Int = 10, search: String = ""): Photos
 		photo(id: String, source_name: String):Photo
 	}
-	type Book { title(id: String = "0"): String, author: String }
+	type Photos {
+		total: Int
+		results: [ListPhoto]
+	}
 	type ListPhoto { id: String, name: String, source: String, thumbnail: String}
 	type Photo {
 		author_link: String,
@@ -43,9 +45,19 @@ const typeDefs = `
 // The resolvers
 const resolvers = {
 	Query: {
-		books: () => books,
-		photos: (parent, args) => get_photos(args.page, args.per_page, args.search).then(resp => resp.photos),
+		photos: (parent, args) => {
+
+			return get_photos(args.page, args.per_page, args.search).then(resp => {
+				return resp;
+			})
+		},
 		photo: (parent, args) => getPhotoById(args.id, args.source_name)
+	},
+	Photos: {
+		results: (parent, args, obj) => {
+			// console.log(parent, args, obj)
+			return parent.photos;
+		}
 	}
 };
 
