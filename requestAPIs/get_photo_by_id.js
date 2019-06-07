@@ -35,7 +35,8 @@ module.exports = function getPhotoById(id, src_name) {
 			author_name: '',
 			source_link: '',
 			source_name: '',
-			main_image_link: ''
+			main_image_link: '',
+			description: ''
 		});
 	}
 

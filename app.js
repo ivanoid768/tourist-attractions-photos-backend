@@ -4,11 +4,16 @@ const qs = require('qs')
 const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
+const corsMiddleware = require('cors')
 const { get_photos } = require('./requestAPIs/get_photos');
 const getPhotoById = require('./requestAPIs/get_photo_by_id');
 
 const app = express()
 const port = process.env.PORT || 4000;
+const cors = corsMiddleware({
+	origin: true,
+	credentials: true
+})
 
 // Some fake data
 const books = [
@@ -38,7 +43,8 @@ const typeDefs = `
 		author_name: String,
 		source_link: String,
 		source_name: String,
-		main_image_link: String
+		main_image_link: String,
+		description: String
 	}
   `;
 
@@ -66,6 +72,8 @@ const schema = makeExecutableSchema({
 	typeDefs,
 	resolvers,
 });
+
+app.use(cors)
 
 // The GraphQL endpoint
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));

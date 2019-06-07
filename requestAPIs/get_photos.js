@@ -158,18 +158,21 @@ function unifyPhotoInterface(photo, source_name) {
 		photo.author_name = photo.photographer;
 		photo.source_link = photo.url;
 		photo.main_image_link = photo.src.large2x;
+		photo.description = photo.url.match(/photo\/([\w-]+)-\d+/i)[1].replace(/-/ig, ' ');
 	}
 	else if (source_name == 'pixabay') {
 		photo.author_link = 'https://pixabay.com/en/users/' + photo.user_id;
 		photo.author_name = photo.user;
 		photo.source_link = photo.pageURL; // str2.match(/\/([^/]+)(?:\/)$/i)[1]
 		photo.main_image_link = photo.largeImageURL;
+		photo.description = photo.tags.replace(/,/ig, '');
 	}
 	else if (source_name == 'unsplash') {
 		photo.author_link = photo.user.links.html;
 		photo.author_name = photo.user.name;
 		photo.source_link = photo.links.html; //  str.match(/photos\/(.+)(?:\/|)$/i)[1]
 		photo.main_image_link = photo.urls.regular;
+		photo.description = photo.alt_description || source_photo.description;
 	}
 
 	let src_name = '';
@@ -180,6 +183,9 @@ function unifyPhotoInterface(photo, source_name) {
 	}
 
 	photo.source_name = src_name.replace(src_name.charAt(0), src_name.charAt(0).toUpperCase());
+
+	let description = photo.description;
+	photo.description = description.charAt(0).toUpperCase() + description.slice(1);
 
 	return photo;
 
